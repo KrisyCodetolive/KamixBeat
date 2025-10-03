@@ -3,8 +3,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ReactNode } from "react";
@@ -14,13 +12,14 @@ type MyBtnProps = {
   id: number;
   children: ReactNode;
   title: string;
+  setLoader:React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-function MenuDropdown({ children, id, title }: MyBtnProps) {
+function MenuDropdown({ children, id, title , setLoader }: MyBtnProps) {
   const [isAlertOpen, setIsAlertOpen] = useState(false);
 
   const handleDeleteClick = () => {
-    setIsAlertOpen(true); // Ouvre l'alerte
+    setIsAlertOpen(true); 
   };
 
   return (
@@ -34,7 +33,7 @@ function MenuDropdown({ children, id, title }: MyBtnProps) {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-      <AlertSingle id={id} title={title} Open={isAlertOpen} Close={()=> setIsAlertOpen(false)}/>
+      <AlertSingle setLoader={setLoader} id={id} title={title} Open={isAlertOpen} Close={()=> setIsAlertOpen(false)}/>
     </div>
   );
 }

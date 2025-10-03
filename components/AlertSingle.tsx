@@ -1,4 +1,3 @@
-import {delInstru} from "@/api/del-instru";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -8,39 +7,44 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-
-import { ReactNode } from "react";
-
+import Axios from "@/lib/axios"
 import { toast } from "sonner"
 
 type MyBtnProps = {
-    id:number
-//   children: ReactNode;
+  id:number
   title: string
   Open: boolean;
   Close: () => void;
+  setLoader:React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 
-function AlertSingle({id,title,Open , Close}:MyBtnProps) {
+function AlertSingle({id , title , Open , setLoader , Close}:MyBtnProps) {
 
       // delete instru
     async function DelInstru(id:number){
+      setLoader(true)
+      try{
+
+        const res = await Axios.delete(`api/Instrumentals/${id}`);
+        console.log('reponse:', res.data);
+        window.location.reload()
+        toast.success("Instrument a été supprimé avec succès !");
     
-      try {
-    
-        const rep = await delInstru(id);
-        toast.success("l'instrumental a bien été supprimé avec succès !");
-        window.location.reload();
-        console.log(rep);
-    
-      } catch (error: any) {
-        toast.error(error?.message || "Une erreur est survenue lors de la suppression veuiller réessayer.");
-        console.error(error);
-      }
-    }
+      }catch (error:any){
+
+        if (error.request) {
+          setLoader(false)
+          console.log("❌ Serveur injoignable ou problème réseau");
+          toast.success("Instrument a été supprimé avec succès !");
+
+        }
+        setLoader(false)
+        console.log('erreur:', error);
+        toast.success("Oupp, une erreur est survenue veillez réessayer ou contacter le créateur...");
+        return error;
+}}
 
 
   return ( 

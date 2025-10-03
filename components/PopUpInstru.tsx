@@ -1,4 +1,5 @@
 import { getItems } from "@/api/get-Items";
+import api from "@/lib/axios"
 import {
   Dialog,
   DialogContent,
@@ -10,18 +11,17 @@ import { Dot } from 'lucide-react';
 
 
 interface Instru {
-  instru: {
-    id: number;
+  Instru: {
     title: string;
     bpm: string;
     gamme: string;
-    cover: string; 
     url: string;   
     price: string;
   };
-  audio: {
+  Audio: {
     price: string;  
   }[];
+  Cover:string
 }
 
 
@@ -42,8 +42,9 @@ function InstruPopup({ id, open , setOpen }: InstruPopupProps) {
   useEffect(() => {
     async function fetchInstruments() {
       try {
-        const res = await getItems(id)
-        setInstru(res!.data);
+        const res = await api.get(`api/Instrumentals/${id}`)
+        console.log(res.data)
+        setInstru(res.data);
       } catch (error) {
         console.error("Erreur lors de la récupération :", error);
       } finally {
@@ -61,26 +62,26 @@ function InstruPopup({ id, open , setOpen }: InstruPopupProps) {
       <DialogContent className="sm:max-w-lg">
         <DialogHeader className="flex justify-center items-center">
             <img
-            src={`http://localhost:3003/uploads/${instru.instru.cover}`} 
+            src={instru.Cover} 
             alt="cover"
             className="w-40 h-auto object-cover rounded-xl shadow"
           />
           
         </DialogHeader>
         <div className="flex flex-col justify-center items-center gap-3">
-          <DialogTitle>{instru.instru.title}</DialogTitle>
+          <DialogTitle>{instru.Instru.title}</DialogTitle>
           <p className="text-blue-500">
-            <a href="#">{instru.instru.url}</a>
+            <a href="#">{instru.Instru.url}</a>
             
           </p>
 
           <div className="flex justify-center items-center gap-2">
             <p>
-            {instru.instru.bpm} bpm
+            {instru.Instru.bpm} bpm
           </p>
            <Dot />
           <p>
-             {instru.instru.gamme}
+             {instru.Instru.gamme}
           </p>
 
           </div>
@@ -88,10 +89,10 @@ function InstruPopup({ id, open , setOpen }: InstruPopupProps) {
 
           <div className="flex justify-center items-center gap-2">
             <p>
-             {instru.audio[1].price} CFA
+             {instru.Audio[1].price=="0"? "GRATUIT": instru.Audio[1].price+" CFA" } 
           </p>
           <p>
-             {instru.audio[2].price} CFA
+             {instru.Audio[2].price} CFA
           </p>
           </div>
           

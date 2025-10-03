@@ -5,14 +5,17 @@ import { Dispatch, SetStateAction } from "react"
 
 type InputPriceProps = {
   label: string
+  Price: string
   setAction: Dispatch<SetStateAction<string>>
 }
 
-export default function InputPrice({ label, setAction }: InputPriceProps) {
-  const [price, setPrice] = useState<string>("12000")
+export default function InputPrice({ label, Price , setAction }: InputPriceProps) {
+  //const Default = `${Price} CFA`;
+  const [price, setPrice] = useState<string>(`${Price} CFA`)
+  
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value === "" ? "12000" : e.target.value
+    const value = e.target.value === "" ? price : e.target.value
     setPrice(value)
     if (value) {
       setAction(value)
@@ -25,8 +28,9 @@ export default function InputPrice({ label, setAction }: InputPriceProps) {
       <Input
         type="number"
         value={price}
-        placeholder="12.000 CFA"
+        placeholder={price}
         onChange={handleChange}
+        step={5000} 
         className="w-[250px]"
       />
     </div>

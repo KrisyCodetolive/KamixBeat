@@ -17,11 +17,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
-import { Plus } from "lucide-react";
+import {  Plus } from "lucide-react";
 import { Trash2 } from "lucide-react";
 import { MoreHorizontal } from "lucide-react";
 import MenuDropdown from "./Dropdown";
 import InstruPopup from "./PopUpInstru";
+import { getInstru } from "@/api/get-Instru";
+import Loader  from "./Loader";
 
 interface Instru {
   instruId: number;
@@ -38,15 +40,18 @@ function DisplayInstru() {
   const [loading, setLoading] = useState(true);
   const [selectedInstruId, setSelectedInstruId] = useState<number>(0);
   const [ouvrir, setOuvrir] = useState(false);
+  const [infoChargement, setInfoChargement] = useState("Liste des instrus disponibles");
 
   // get Instru requête
   useEffect(() => {
     async function fetchInstruments() {
       try {
-        const res = await api.get("/get-instru");
+        const res = await api.get("api/Instrumentals");
         setInstruments(res.data);
       } catch (error) {
         console.error("Erreur lors de la récupération :", error);
+        setInfoChargement("Une erreur est survenue veillez réessayer ou contacter le créateur")
+        
       } finally {
         setLoading(false);
       }
@@ -55,7 +60,7 @@ function DisplayInstru() {
     fetchInstruments();
   }, []);
 
-  if (loading) return <p>Chargement...</p>;
+  if (loading) return <Loader/>;
 
   return (
     <div>
@@ -64,7 +69,7 @@ function DisplayInstru() {
           <h2 className="text-lg font-semibold">Liste des instrus</h2>
 
           <div className="flex gap-2">
-            <SendInstru>
+            <SendInstru setLoader={setLoading}>
               <Button className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-xl px-4 py-2 shadow-md transition-all duration-200">
                 <Plus className="w-4 h-4" />
                 Ajouter
@@ -82,7 +87,7 @@ function DisplayInstru() {
 
         <CardContent>
           <Table>
-            <TableCaption>Liste des instrus disponibles</TableCaption>
+            <TableCaption>{infoChargement}</TableCaption>
             <TableHeader>
               <TableRow>
                 <TableHead>Nom</TableHead>
@@ -111,7 +116,7 @@ function DisplayInstru() {
                     </a>
                   </TableCell>
                   <TableCell>
-                    <MenuDropdown id={instru.instruId} title={instru.title}>
+                    <MenuDropdown setLoader={setLoading} id={instru.instruId} title={instru.title}>
                       <div>
                         <Button
                           variant="ghost"
