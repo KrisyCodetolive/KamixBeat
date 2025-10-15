@@ -109,10 +109,13 @@ function DisplayInstru() {
                   <TableCell>{formatDate(instru.date)}</TableCell>
                   <TableCell>
                     <a
-                      href={instru.url}
+                      href={`http://localhost:3000/client/${instru.instruId}`}
+                      target="_blank"
                       className="text-blue-500 hover:underline"
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()} 
                     >
-                      {instru.url}
+                      {`http://localhost:3000/client/${instru.instruId}`}
                     </a>
                   </TableCell>
                   <TableCell>
