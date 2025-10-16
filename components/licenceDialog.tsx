@@ -1,6 +1,8 @@
-//import { useState } from "react";
 "use client";
-import { Button } from "@/components/ui/button";
+
+import { SetStateAction, useState } from "react";
+import { Input } from "@/components/ui/input"; 
+import { Button } from "@/components/ui/button";// adapte Input si tu as un autre composant
 import {
   Dialog,
   DialogContent,
@@ -9,134 +11,200 @@ import {
   DialogFooter,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { ReactNode, useEffect } from "react";
 import axios from "axios";
 import PaystackPop from "@paystack/inline-js";
-import { AnyARecord } from "dns";
+import { Loader2, CheckCircle2, XCircle } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
 
 interface LicenseInfoProps {
-  children: ReactNode;
+  children: React.ReactNode;
+  id: string;
+  title:string; 
   Price: {
     path: string;
-    price: string;
+    price: string; // en NGN ou en la devise d'origine
   }[];
 }
 
-export function LicenseDialog({ children, Price }: LicenseInfoProps) {
-  //   useEffect(() => {
-  //   // Charger Paystack côté navigateur seulement
-  //   if (typeof window !== "undefined") {
-  //     require("@paystack/inline-js");
-  //   }
-  // }, []);
+export function LicenseDialog({ children, Price, id, title }: LicenseInfoProps) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [email, setEmail] = useState("");
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [isSuccess, setIsSuccess] = useState<boolean | null>(null);
 
-  //transaction de payement
-  const handlePay = async () => {
-    //setLoading(true);
+  const NGNtoXOF = (price: string) => Number(price) * 2.5; // Exemple conversion, adapte selon le taux réel
 
+  const handlePay = async (email: string, amount: number, iden: string) => {
     try {
-      // Initialiser la transaction via ton backend
-      const res = await axios.post(
-        "/api/Paystack/Initialization",
-        {
-          email: "test@example.com",
-          amount: 2000, // 20 NGN pour test
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
+      const res = await axios.post("/api/Paystack/Initialization", {
+        email,
+        amount, // en kobo pour NGN
+      });
+      
       const data = res.data;
-      console.log("Données reçues:", data);
+      if (!data) throw new Error("Erreur d'initialisation Paystack");
 
-      if (data) {
-        // Ouvrir la popup Paystack
-        const popup = new PaystackPop();
-        popup.resumeTransaction(data.access_code, {
-          onSuccess: async (transaction: any) => {
-            console.log("Paiement réussi :", transaction);
+      const popup = new PaystackPop();
+      popup.resumeTransaction(data.access_code, {
+        onSuccess: async (transaction: any) => {
+          console.log("Paiement réussi :", transaction);
 
-                    // Vérification côté serveur
-            const verify = await axios.post("/api/Paystack/verify", {
-              reference: transaction.reference,
-            });
+          // Vérification côté serveur
+          setIsDownloading(true);
+          const verify = await axios.post("/api/Paystack/verify", {
+            params:iden,
+            reference: transaction.reference,
+            type:"Standard",
+          });
 
-            if (verify.data.success) {
-              alert("🎉 Paiement confirmé par le serveur !");
-            } else {
-              alert("⚠️ Paiement non confirmé, réessaye !");
-            }
-          },
-          onCancel: () => {
-            alert("Paiement annulé");
-          },
-        });
-      } else {
-        alert("Erreur d'initialisation du paiement");
-      }
+          if (verify.data.success) {
+              console.log("id:",iden)
+            // Téléchargement après paiement
+            await handleDownload(iden, "Standard", transaction.reference,email);
+          } else {
+            alert("⚠️ Paiement non confirmé !");
+          }
+        },
+        onCancel: () => alert("Paiement annulé"),
+      });
     } catch (error: any) {
-      console.error(
-        "Erreur lors de l'initialisation :",
-        error.response?.data || error.message
-      );
-      alert("Erreur lors de l'initialisation du paiement");
+      console.error("Erreur Paystack :", error.message);
+      alert("Erreur d'initialisation du paiement");
     }
+  };
 
-    //setLoading(false);
+  const handleDownload = async (idenn: string, type: string, ref:string , mail:string="inconnu") => {
+    try {
+      setIsOpen(false);
+      setIsDownloading(true);
+      setProgress(0);
+      setIsSuccess(null);
+      console.log("id:",idenn)
+      const response = await axios.post("/api/Paystack/verify", {
+        params: idenn,
+        reference: ref,
+        type,
+        email:mail
+      });
+      console.log("id:",idenn)
+      const signedUrl = response.data.signedUrl;
+      if (!signedUrl) throw new Error("URL signée manquante");
+
+      const fileResponse = await axios.get(signedUrl, {
+        responseType: "blob",
+        onDownloadProgress: (e) => {
+          if (e.total) setProgress(Math.round((e.loaded * 100) / e.total));
+        },
+      });
+
+      const blob = new Blob([fileResponse.data]);
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${title}.mp3`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+
+      setIsSuccess(true);
+      setTimeout(() => setIsDownloading(false), 1500);
+    } catch (error) {
+      console.error("Erreur téléchargement :", error);
+      setIsSuccess(false);
+      setTimeout(() => setIsDownloading(false), 2000);
+    }
+  };
+
+  const handleStandardClick = async (id:string) => {
+    const priceXOF = NGNtoXOF(Price[1].price);
+    
+    if (priceXOF === 0) {
+      await handleDownload(id, "Standard","0",email);
+    } else {
+      // Demander l'email si non rempli
+      if (!email) {
+        alert("Veuillez entrer votre email pour la licence Standard");
+        return;
+      }
+      await handlePay(email, priceXOF, id);
+    }
   };
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="max-w-sm">
-        <DialogHeader>
-          <DialogTitle>Choisissez votre licence</DialogTitle>
-        </DialogHeader>
-        <div className="space-y-4">
-          {Price[1].price == "0" ? (
-            ""
-          ) : (
+    <>
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <DialogTrigger asChild>{children}</DialogTrigger>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Choisissez votre licence</DialogTitle>
+          </DialogHeader>
+
+          <div className="space-y-4">
+            {Price[1].price === "0" ? null : (
+              <div className="flex justify-between items-center p-2 border rounded">
+                <span>Free</span>
+                <span>0 CFA</span>
+              </div>
+            )}
+
+            <div className="flex flex-col gap-2 p-2 border rounded">
+              <div className="flex justify-between items-center">
+                <span>Standard</span>
+                <span>{NGNtoXOF(Price[1].price)} CFA</span>
+              </div>
+              <Input
+                type="email"
+                placeholder="Votre email"
+                value={email}
+                onChange={(e: { target: { value: SetStateAction<string>; }; }) => setEmail(e.target.value)}
+              />
+            </div>
+
             <div className="flex justify-between items-center p-2 border rounded">
-              <span>Free</span>
-              <span>0 CFA</span>
+              <span>Premium</span>
+              <span>INDISPONIBLE</span>
+            </div>
+          </div>
+
+          <DialogFooter className="flex justify-between">
+            {Price[1].price === "0" ? null : (
+              <Button variant="outline" onClick={() => handleDownload(id, "Free", "0")}>
+                Free
+              </Button>
+            )}
+            <Button variant="default" onClick={()=> handleStandardClick(id)}>
+              Standard
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* ---------------- Loader ---------------- */}
+      {isDownloading && (
+        <div className="fixed inset-0 bg-black/60 flex flex-col items-center justify-center z-50">
+          {isSuccess === null && (
+            <>
+              <Loader2 className="w-10 h-10 animate-spin text-white mb-4" />
+              <Progress value={progress} className="w-64 h-2" />
+              <p className="text-white mt-2">{progress}%</p>
+            </>
+          )}
+          {isSuccess === true && (
+            <div className="flex flex-col items-center text-green-400">
+              <CheckCircle2 className="w-10 h-10 mb-2" />
+              <p>Téléchargement terminé ✅</p>
             </div>
           )}
-
-          <div className="flex justify-between items-center p-2 border rounded">
-            <span>Standard</span>
-            <span>{Price[1].price} CFA</span>
-          </div>
-          <div className="flex justify-between items-center p-2 border rounded">
-            <span>Premium</span>
-            <span>{Price[2].price} CFA</span>
-          </div>
-        </div>
-        <DialogFooter>
-          {Price[1].price == "0" ? (
-            <></>
-          ) : (
-            <Button
-              variant="outline"
-              onClick={() => console.log("Paiement Premium")}
-            >
-              Free
-            </Button>
+          {isSuccess === false && (
+            <div className="flex flex-col items-center text-red-400">
+              <XCircle className="w-10 h-10 mb-2" />
+              <p>Échec du téléchargement ❌</p>
+            </div>
           )}
-
-          <Button
-            variant={Price[1].price == "0" ? "outline" : "default"}
-            onClick={handlePay}
-          >
-            Standard
-          </Button>
-          <Button onClick={() => console.log("Paiement Premium")}>
-            Premium
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </div>
+      )}
+    </>
   );
 }
