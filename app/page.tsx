@@ -32,7 +32,7 @@ export default function PasswordInput() {
       if (res.status === 200 && res.data?.success) {
         // 🔑 Stockage de la clé dans localStorage
         localStorage.setItem("auth_key", "connected"); 
-        router.push("http://localhost:3000/admin/dashbord");
+        router.push(`${window.location.origin}/admin/dashbord`);
       } else {
         setError(res.data?.message || "Mot de passe incorrect.");
       }
