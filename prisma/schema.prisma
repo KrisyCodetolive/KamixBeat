@@ -1,0 +1,99 @@
+// Mot de passe SBD Krisy225@005
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum FileType {
+  mp3
+  zip 
+}
+
+
+
+//Model 
+model Instrumental {
+
+  instruId Int @id @default(autoincrement())
+  title String @unique 
+  bpm  String
+  gamme String @db.VarChar(10)
+  directory String @unique
+  cover String? @unique 
+  url String @default("/path/to/instru")
+  audioFiles AudioFile[]
+  AchatClient AchatClient[]
+  date DateTime @default(now())
+}
+
+model AudioFile {
+  id             Int      @id @default(autoincrement())
+  type           FileType
+  path            String   @unique
+  price           String   @default("null")
+  instrumentalId Int      
+  instrumental   Instrumental @relation(fields: [instrumentalId], references: [instruId], onDelete: Cascade , onUpdate: Cascade )
+  createdAt      DateTime    @default(now())
+}
+
+model Client {
+  id        Int           @id @default(autoincrement())
+  nom       String
+  type      ClientType
+  numero    String
+  email     String        
+  accord    Boolean       @default(true) 
+  achats    AchatClient[] 
+
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+}
+
+model AchatClient {
+  id        Int        @id @default(autoincrement())
+  client    Client     @relation(fields: [clientId], references: [id])
+  clientId  Int
+
+  instru    Instrumental @relation(fields: [instrumentalId], references: [instruId])
+  instrumentalId  Int
+
+  prix      String
+  licence   LicenceType
+
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model AchatClientPreview {
+  id        Int        @id @default(autoincrement())
+  client    String    @default("null")
+  instrumental  String
+  licence   LicenceType
+  prix      String
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+// Enum pour le type de client
+enum ClientType {
+  ARTISTE
+  BEATMAKER
+}
+
+// Enum pour le type de licence
+enum LicenceType {
+  FREE
+  STANDARD
+  PREMIUM
+}
+
+
+
+
+
