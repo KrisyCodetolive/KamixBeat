@@ -111,13 +111,13 @@ function DisplayInstru() {
                   <TableCell>{formatDate(instru.date)}</TableCell>
                   <TableCell>
                     <a
-                      href={`${origin}/client/${instru.instruId}`}
+                      href={`${process.env.NEXT_PUBLIC_BASIC_URL}/client/${instru.instruId}`}
                       target="_blank"
                       className="text-blue-500 hover:underline"
                       rel="noopener noreferrer"
                       onClick={(e) => e.stopPropagation()} 
                     >
-                      {`${process.env.NEXT_PUBLIC_BASIC_UR}/client/${instru.instruId}`}
+                      {`${process.env.NEXT_PUBLIC_BASIC_URL}/client/${instru.instruId}`}
                     </a>
                   </TableCell>
                   <TableCell>

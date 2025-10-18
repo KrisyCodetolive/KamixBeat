@@ -60,7 +60,7 @@ function InstruPopup({ id, open, setOpen }: InstruPopupProps) {
             <div className="flex flex-col justify-center items-center gap-3">
               <DialogTitle>{instru.Instru.title}</DialogTitle>
               <p className="text-blue-500">
-                <a href={`${process.env.NEXT_PUBLIC_BASIC_UR}/client/${id}`} target="_blank">{`http://localhost:3000/client/${id}`}</a>
+                <a href={`${process.env.NEXT_PUBLIC_BASIC_URL}/client/${id}`} target="_blank">{`http://localhost:3000/client/${id}`}</a>
               </p>
 
               <div className="flex justify-center items-center gap-2">
