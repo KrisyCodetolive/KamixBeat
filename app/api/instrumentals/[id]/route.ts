@@ -22,75 +22,75 @@ const supabase = createClient(
 );
 
 //DELETE a instrumental
-export async function DELETE(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  const { id } = await params;
-  const instrumentalId = parseInt(id);
+// export async function DELETE(
+//   req: NextRequest,
+//   { params }: { params: Promise<{ id: string }> }
+// ) {
+//   const { id } = await params;
+//   const instrumentalId = parseInt(id);
 
-  if (isNaN(instrumentalId)) {
-    return NextResponse.json({ error: "ID invalide" }, { status: 400 });
-  }
+//   if (isNaN(instrumentalId)) {
+//     return NextResponse.json({ error: "ID invalide" }, { status: 400 });
+//   }
 
-  // 1. Vérifier existence en BD
-  const instrumental = await prisma.instrumental.findUnique({
-    where: { instruId: instrumentalId },
-    select: { cover: true },
-  });
+//   // 1. Vérifier existence en BD
+//   const instrumental = await prisma.instrumental.findUnique({
+//     where: { instruId: instrumentalId },
+//     select: { cover: true },
+//   });
 
-  if (!instrumental) {
-    return NextResponse.json(
-      { error: "Instrumental introuvable" },
-      { status: 404 }
-    );
-  }
+//   if (!instrumental) {
+//     return NextResponse.json(
+//       { error: "Instrumental introuvable" },
+//       { status: 404 }
+//     );
+//   }
 
-  // 2. Récupérer les fichiers audio associés
-  const audioFiles = await prisma.audioFile.findMany({
-    where: { instrumentalId },
-    select: { path: true },
-  });
+//   // 2. Récupérer les fichiers audio associés
+//   const audioFiles = await prisma.audioFile.findMany({
+//     where: { instrumentalId },
+//     select: { path: true },
+//   });
 
-  // 3. Construire la liste des fichiers à supprimer
-let Pathfiles: string[] = [];
-  if (instrumental.cover)
-    Pathfiles.push(extractPathFromUrl(instrumental.cover));
-  Pathfiles.push(...audioFiles.map((a) => extractPathFromUrl(a.path)));
+//   // 3. Construire la liste des fichiers à supprimer
+// let Pathfiles: string[] = [];
+//   if (instrumental.cover)
+//     Pathfiles.push(extractPathFromUrl(instrumental.cover));
+//   Pathfiles.push(...audioFiles.map((a) => extractPathFromUrl(a.path)));
 
-  // 4. Supprimer d’abord les fichiers du bucket
-  const decodedPaths = Pathfiles.map((p) => decodeURIComponent(p));
-  console.log("Paths envoyés à Supabase:", decodedPaths);
-  if (Pathfiles.length > 0) {
-    const { error: bucketError } = await supabase.storage
-      .from("instrumentals")
-      .remove(decodedPaths);
+//   // 4. Supprimer d’abord les fichiers du bucket
+//   const decodedPaths = Pathfiles.map((p) => decodeURIComponent(p));
+//   console.log("Paths envoyés à Supabase:", decodedPaths);
+//   if (Pathfiles.length > 0) {
+//     const { error: bucketError } = await supabase.storage
+//       .from("instrumentals")
+//       .remove(decodedPaths);
 
-    if (bucketError) {
-      console.error("Erreur Supabase remove:", bucketError.message);
-      return NextResponse.json(
-        { error: "Erreur lors de la suppression des fichiers" },
-        { status: 500, headers }
-      );
-    }
-  }
+//     if (bucketError) {
+//       console.error("Erreur Supabase remove:", bucketError.message);
+//       return NextResponse.json(
+//         { error: "Erreur lors de la suppression des fichiers" },
+//         { status: 500, headers }
+//       );
+//     }
+//   }
 
-  // 5. Supprimer les entrées en BD (cascade audioFiles si non configuré)
-  try {
-    await prisma.instrumental.delete({ where: { instruId: instrumentalId } });
-  } catch (err: any) {
-    console.error("Erreur suppression BD:", err.message);
-    return NextResponse.json(
-      { error: "Erreur lors de la suppression en BD" },
-      { status: 500, headers }
-    );
-  }
+//   // 5. Supprimer les entrées en BD (cascade audioFiles si non configuré)
+//   try {
+//     await prisma.instrumental.delete({ where: { instruId: instrumentalId } });
+//   } catch (err: any) {
+//     console.error("Erreur suppression BD:", err.message);
+//     return NextResponse.json(
+//       { error: "Erreur lors de la suppression en BD" },
+//       { status: 500, headers }
+//     );
+//   }
 
-  return NextResponse.json(
-    { message: "Instrumental supprimé avec succès" },
-    { status: 200, headers }
-  );
-}
+//   return NextResponse.json(
+//     { message: "Instrumental supprimé avec succès" },
+//     { status: 200, headers }
+//   );
+// }
 
 //GET a instrumental
 export async function GET(
