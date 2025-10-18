@@ -21,6 +21,11 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
+export function GET(){
+
+  return NextResponse.json({message:"ok"},{ status: 200 , headers })
+}
+
 //DELETE a instrumental
 // export async function DELETE(
 //   req: NextRequest,
@@ -93,73 +98,73 @@ const supabase = createClient(
 // }
 
 //GET a instrumental
-export async function GET(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  const id = parseInt(params.id);
+// export async function GET(
+//   req: NextRequest,
+//   { params }: { params: { id: string } }
+// ) {
+//   const id = parseInt(params.id);
 
-  if (isNaN(id)) {
-    return NextResponse.json(
-      { error: "ID invalide" },
-      { status: 400, headers }
-    );
-  }
+//   if (isNaN(id)) {
+//     return NextResponse.json(
+//       { error: "ID invalide" },
+//       { status: 400, headers }
+//     );
+//   }
 
-  try {
-    const Instru = await prisma.instrumental.findUnique({
-      where: { instruId: id },
-      select: {
-        instruId: true,
-        title: true,
-        bpm: true,
-        gamme: true,
-        cover: true,
-        url: true,
-      },
-    });
+//   try {
+//     const Instru = await prisma.instrumental.findUnique({
+//       where: { instruId: id },
+//       select: {
+//         instruId: true,
+//         title: true,
+//         bpm: true,
+//         gamme: true,
+//         cover: true,
+//         url: true,
+//       },
+//     });
 
-    const Audio = await prisma.audioFile.findMany({
-      where: { instrumentalId: id },
-      select: { price: true, path: true },
-    });
+//     const Audio = await prisma.audioFile.findMany({
+//       where: { instrumentalId: id },
+//       select: { price: true, path: true },
+//     });
 
-    let Pathfiles: string[] = [];
-    let SignedUrl:string[]=[]
-    if (Instru && Audio.length > 0) {
-      Pathfiles.push(decodeURIComponent(extractPathFromUrl(Instru.cover!)));
-      Pathfiles.push(
-        ...Audio.map((p) => decodeURIComponent(extractPathFromUrl(p.path)))
-      );
+//     let Pathfiles: string[] = [];
+//     let SignedUrl:string[]=[]
+//     if (Instru && Audio.length > 0) {
+//       Pathfiles.push(decodeURIComponent(extractPathFromUrl(Instru.cover!)));
+//       Pathfiles.push(
+//         ...Audio.map((p) => decodeURIComponent(extractPathFromUrl(p.path)))
+//       );
 
-      for (let files of Pathfiles) {
-        const { data, error } = await supabase.storage
-          .from("instrumentals")
-          .createSignedUrl(files, 100);
+//       for (let files of Pathfiles) {
+//         const { data, error } = await supabase.storage
+//           .from("instrumentals")
+//           .createSignedUrl(files, 100);
 
-        if (error) {
-          console.error(error);
-        } else {
-          SignedUrl.push(data.signedUrl)
-          //console.log(SignedUrl)
+//         if (error) {
+//           console.error(error);
+//         } else {
+//           SignedUrl.push(data.signedUrl)
+//           //console.log(SignedUrl)
         
-        }
-      }
-    }else{
-          return NextResponse.json(
-        { error: "Instrumental pas trouvé" },
-        { status: 404, headers }
-      );
-    }
-    return NextResponse.json(
-      { Instru, Audio, SignedUrl },
-      { status: 200, headers }
-    );
-  } catch (error) {
-    console.error("Erreur GET instrumental:", error);
-    return NextResponse.json(
-      { error: "Une erreur est survenue" },
-      { status: 500, headers }
-    );
-  }
-}
+//         }
+//       }
+//     }else{
+//           return NextResponse.json(
+//         { error: "Instrumental pas trouvé" },
+//         { status: 404, headers }
+//       );
+//     }
+//     return NextResponse.json(
+//       { Instru, Audio, SignedUrl },
+//       { status: 200, headers }
+//     );
+//   } catch (error) {
+//     console.error("Erreur GET instrumental:", error);
+//     return NextResponse.json(
+//       { error: "Une erreur est survenue" },
+//       { status: 500, headers }
+//     );
+//   }
+// }
