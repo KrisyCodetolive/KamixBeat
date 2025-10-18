@@ -10,6 +10,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+import api from "@/lib/axios";
 import { ReactNode } from "react";
 
 import { toast } from "sonner"
@@ -26,7 +27,7 @@ async function DelInstru(){
 
   try {
 
-    const rep = await delInstruAll();
+    const rep = await api.delete("/api/del-instru");
     toast.success("Toutes les instruments on été supprimé avec succès !");
     window.location.reload();
     console.log(rep);

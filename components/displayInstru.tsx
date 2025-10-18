@@ -46,7 +46,7 @@ function DisplayInstru() {
   useEffect(() => {
     async function fetchInstruments() {
       try {
-        const res = await api.get("api/Instrumentals");
+        const res = await api.get("/api/Instrumentals");
         setInstruments(res.data);
       } catch (error) {
         console.error("Erreur lors de la récupération :", error);

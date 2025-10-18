@@ -20,6 +20,7 @@ import InputTitle from "./titleInput";
 import InputPrice from "./PriceInput";
 import { toast } from "sonner";
 import Axios from "@/lib/axios";
+import api from "@/lib/axios";
 
 type MyBtnProps = {
   children: ReactNode;
@@ -66,7 +67,7 @@ function SendInstru({ children , setLoader }: MyBtnProps) {
       const prices = ["Free", standardPrice, premiumPrice];
       formData.append("prices", JSON.stringify(prices));
 
-      const rep = await Axios.post("api/Instrumentals", formData, {
+      const rep = await api.post("/api/Instrumentals", formData, {
         headers: { "Content-Type": "multipart/form-data" },
         });
       
