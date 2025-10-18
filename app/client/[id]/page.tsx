@@ -18,6 +18,7 @@ export default function InstrumentalInterface({
   const [instru, setInstru] = useState<Instru | null>(null);
   const [loading, setLoading] = useState(true);
   const { id } = React.use(params);
+  console.log(id);
 
   // get Instru requête
   useEffect(() => {
