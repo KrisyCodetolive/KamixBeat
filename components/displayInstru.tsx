@@ -46,6 +46,7 @@ function DisplayInstru() {
   useEffect(() => {
     async function fetchInstruments() {
       try {
+        console.log("Base URL utilisée :", process.env.NEXT_PUBLIC_BASIC_URL);
         const res = await api.get("/api/Instrumentals");
         setInstruments(res.data);
       } catch (error) {

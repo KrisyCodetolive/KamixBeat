@@ -23,7 +23,7 @@ export default function InstrumentalInterface({
   useEffect(() => {
     async function fetchInstruments() {
       try {
-        const res = await api.get(`api/Instrumentals/${id}`);
+        const res = await api.get(`/api/Instrumentals/${id}`);
         console.log(res.data);
         setInstru(res.data);
       } catch (error) {
