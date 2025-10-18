@@ -21,9 +21,10 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
-export function GET(){
+export function GET( req: NextRequest,
+   { params }: { params: { id: string } }){
 
-  return NextResponse.json({message:"ok"},{ status: 200 , headers })
+  return NextResponse.json({ message: "ok", id: params.id },{ status: 200 , headers })
 }
 
 //DELETE a instrumental
