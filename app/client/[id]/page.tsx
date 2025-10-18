@@ -11,13 +11,13 @@ import Loader from "@/components/Loader";
 import MusicPlayer from "@/components/MusicPlayer"
 
 export default function InstrumentalInterface({
-  params,
+   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: { id: string };
 }) {
   const [instru, setInstru] = useState<Instru | null>(null);
   const [loading, setLoading] = useState(true);
-  const { id } = React.use(params);
+  const { id } = params;
   console.log(id);
 
   // get Instru requête
