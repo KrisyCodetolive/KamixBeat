@@ -1,12 +1,11 @@
 import axios from "axios";
-//import getLocalIP from "@/utils/GetIpv4";
 
-//const IP = getLocalIP();
-const ip = "192.168.1.11";
-//const ip = "172.20.10.2";
-const Axios = axios.create({
+const api = axios.create();
 
-    baseURL:`http://${ip}:3000`
-})
+export const setApiBaseUrl = () => {
+  if (typeof window !== "undefined") {
+    api.defaults.baseURL = window.location.origin;
+  }
+};
 
-export default Axios
+export default api;

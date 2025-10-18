@@ -9,7 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Card, CardHeader, CardContent } from "@/components/ui/card";
+import { CardContent } from "@/components/ui/card";
 import { useEffect, useState } from "react";
 import Axios from "@/lib/axios";
 
@@ -21,15 +21,14 @@ interface Instru {
   prix: string;
 }
 
-function Sale() {
+export default function Sale() {
   const [instru, setInstru] = useState<Instru[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // get Instru requête
   useEffect(() => {
     async function fetchInstruments() {
       try {
-        const res = await Axios.get(`api/Paiement`);
+        const res = await Axios.get(`/api/Paiement`);
         console.log(res.data);
         setInstru(res.data);
       } catch (error) {
@@ -41,17 +40,15 @@ function Sale() {
 
     fetchInstruments();
   }, []);
+
   if (loading) {
-      return (
-        <>
-          <Loader />
-        </>
-      );
-    } else if (!instru) {
-      return (
-        <p className="text-center text-red-500">Instrumental non disponible</p>
-      );
-    }
+    return <Loader />;
+  }
+
+  if (instru.length === 0) {
+    return <p className="text-center text-red-500">Aucun paiement trouvé</p>;
+  }
+
   return (
     <div>
       <CardContent>
@@ -63,26 +60,21 @@ function Sale() {
               <TableHead>Production</TableHead>
               <TableHead>Type de licence</TableHead>
               <TableHead>Prix</TableHead>
-              {/* <TableHead>Date</TableHead> */}
             </TableRow>
           </TableHeader>
 
           <TableBody>
-            {instru.map((instru, index) => (
-                <TableRow
-                  key={instru.id}>
-                  <TableCell>{instru.client}</TableCell>
-                  <TableCell>{instru.instrumental}</TableCell>
-                  <TableCell>{instru.licence}</TableCell>
-                  <TableCell>{instru.prix}</TableCell>
-
-                </TableRow>
-              ))}
+            {instru.map((item) => (
+              <TableRow key={item.id}>
+                <TableCell>{item.client}</TableCell>
+                <TableCell>{item.instrumental}</TableCell>
+                <TableCell>{item.licence}</TableCell>
+                <TableCell>{item.prix}</TableCell>
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
       </CardContent>
     </div>
   );
 }
-
-export default Sale;

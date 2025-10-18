@@ -60,6 +60,8 @@ function DisplayInstru() {
     fetchInstruments();
   }, []);
 
+  const origin = typeof window !== "undefined" ? window.location.origin : "";
+
   if (loading) return <Loader/>;
 
   return (
@@ -109,13 +111,13 @@ function DisplayInstru() {
                   <TableCell>{formatDate(instru.date)}</TableCell>
                   <TableCell>
                     <a
-                      href={`http://localhost:3000/client/${instru.instruId}`}
+                      href={`${origin}/client/${instru.instruId}`}
                       target="_blank"
                       className="text-blue-500 hover:underline"
                       rel="noopener noreferrer"
                       onClick={(e) => e.stopPropagation()} 
                     >
-                      {`http://localhost:3000/client/${instru.instruId}`}
+                      {`${origin}/client/${instru.instruId}`}
                     </a>
                   </TableCell>
                   <TableCell>

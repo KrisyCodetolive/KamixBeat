@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,13 @@ export default function PasswordInput() {
 
   const router = useRouter();
 
+ 
+    useEffect(() => {
+      const key = localStorage.getItem("auth_key");
+      if (key && key == "connected") {
+        router.push("/admin/dashbord"); 
+      }
+    }, [router]);
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -56,7 +63,7 @@ export default function PasswordInput() {
             <Input
               id="password"
               type={show ? "text" : "password"}
-              placeholder="Entrez le mot de passe pour vous connecter"
+              placeholder="mot de passe"
               value={Password}
               onChange={(e) => setPassword(e.target.value)}
               className="pr-10"

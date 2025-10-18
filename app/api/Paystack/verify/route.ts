@@ -13,7 +13,7 @@ export async function OPTIONS() {
   return NextResponse.json({}, { status: 200, headers });
 }
 
-// ✅ Initialisation du client Supabase
+// Initialisation du client Supabase
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
