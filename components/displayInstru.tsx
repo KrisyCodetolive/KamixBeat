@@ -61,7 +61,6 @@ function DisplayInstru() {
     fetchInstruments();
   }, []);
 
-  const origin = typeof window !== "undefined" ? window.location.origin : "";
 
   if (loading) return <Loader/>;
 
@@ -118,7 +117,7 @@ function DisplayInstru() {
                       rel="noopener noreferrer"
                       onClick={(e) => e.stopPropagation()} 
                     >
-                      {`${origin}/client/${instru.instruId}`}
+                      {`${process.env.NEXT_PUBLIC_BASIC_UR}/client/${instru.instruId}`}
                     </a>
                   </TableCell>
                   <TableCell>
