@@ -7,7 +7,7 @@ const IPs: string[] = [
 ];
 
 
-const baseURL = process.env.NEXT_PUBLIC_API_URL || IPs[0];
+const baseURL = process.env.NEXT_BASIC_URL || IPs[0];
 
 const api = axios.create({
   baseURL,
