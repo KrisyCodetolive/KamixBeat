@@ -99,7 +99,7 @@ export async function GET(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  const id = await parseInt(params.id);
+  const id = parseInt(params.id);
 
   if (isNaN(id)) {
     return NextResponse.json(
