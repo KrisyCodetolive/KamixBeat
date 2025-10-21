@@ -117,7 +117,7 @@ export function LicenseDialog({ children, Price, id, title }: LicenseInfoProps) 
   };
 
   const handleStandardClick = async (id:string) => {
-    const priceXOF = parseInt(Price[1].price)*100;
+    const priceXOF = parseInt(Price[1].price);
     
     if (priceXOF === 0) {
       await handleDownload(id, "Standard","0",email);
