@@ -10,7 +10,7 @@ export async function POST(req: Request) {
       { email, amount },
       {
         headers: {
-          Authorization: `Bearer ${process.env.PAYSTACK_TEST_KEY}`, // ou PAYSTACK_SECRET_KEY
+          Authorization: `Bearer ${process.env.PAYSTACK_TEST_KEY}`, 
           "Content-Type": "application/json",
         },
       }
