@@ -33,7 +33,10 @@ export function LicenseDialog({ children, Price, id, title }: LicenseInfoProps) 
   const [progress, setProgress] = useState(0);
   const [isSuccess, setIsSuccess] = useState<boolean | null>(null);
 
-  const NGNtoXOF = (price: string) => Number(price); 
+
+
+
+  const NGNtoXOF = (price: string) => Number(price)*100; 
   const handlePay = async (email: string, amount: number, iden: string) => {
     try {
       const res = await axios.post("/api/Paystack/Initialization", {
