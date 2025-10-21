@@ -1,26 +1,29 @@
 import axios from "axios";
+import { NextResponse } from "next/server";
 
-export async function POST(req: { json: () => PromiseLike<{ email: any; amount: any; }> | { email: any; amount: any; }; }) {
+export async function POST(req: Request) {
   try {
     const { email, amount } = await req.json();
 
     const response = await axios.post(
       "https://api.paystack.co/transaction/initialize",
-      {
-        email,
-        amount, 
-      },
+      { email, amount },
       {
         headers: {
-          Authorization: `Bearer ${process.env.PAYSTACK_TEST_KEY}`,
+          Authorization: `Bearer ${process.env.PAYSTACK_TEST_KEY}`, // ou PAYSTACK_SECRET_KEY
           "Content-Type": "application/json",
         },
       }
     );
-    console.log(response.data.data)
-    return Response.json(response.data.data);
+
+    console.log("Paystack Initialization Data:", response.data.data);
+
+    return NextResponse.json(response.data.data);
   } catch (error: any) {
     console.error("Erreur Paystack:", error.response?.data || error.message);
-    return Response.json({ error: "Erreur d'initialisation du paiement" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Erreur d'initialisation du paiement" },
+      { status: 500 }
+    );
   }
 }
