@@ -15,6 +15,7 @@ import axios from "axios";
 import PaystackPop from "@paystack/inline-js";
 import { Loader2, CheckCircle2, XCircle } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
+import api from "@/lib/axios";
 
 interface LicenseInfoProps {
   children: React.ReactNode;
@@ -54,7 +55,7 @@ export function LicenseDialog({ children, Price, id, title }: LicenseInfoProps) 
 
           // Vérification côté serveur
           setIsDownloading(true);
-          const verify = await axios.post("/api/Paystack/verify", {
+          const verify = await api.post("/api/Paystack/verify", {
             params:iden,
             reference: transaction.reference,
             type:"Standard",
