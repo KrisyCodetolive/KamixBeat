@@ -63,8 +63,7 @@ function SendInstru({ children , setLoader }: MyBtnProps) {
       formData.append("cover", cover!);
       formData.append("preview", audios[0]);
       formData.append("full", audios[1]);
-      formData.append("project", audios[2]);
-      const prices = ["Free", standardPrice, premiumPrice];
+      const prices = ["Free", standardPrice];
       formData.append("prices", JSON.stringify(prices));
 
       const rep = await api.post("/api/Instrumentals", formData, {

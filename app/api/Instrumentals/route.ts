@@ -49,12 +49,11 @@ export async function POST(req: NextRequest) {
     const cover = formData.get("cover") as File | null;
     const preview = formData.get("preview") as File | null;
     const full = formData.get("full") as File | null;
-    const project = formData.get("project") as File | null;
     const priceString = formData.get("prices") as string;
     const price: string[] = JSON.parse(priceString);
     console.log(price);
     //Audio list
-    const Files: File[] = [cover, preview, full, project].filter(
+    const Files: File[] = [cover, preview, full].filter(
       Boolean
     ) as File[];
 
@@ -145,7 +144,7 @@ export async function POST(req: NextRequest) {
           });
         }
 
-        return createdInstru; // retourne l'instru si tout réussit
+        return createdInstru; 
       });
 
       //succefull

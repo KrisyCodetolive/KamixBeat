@@ -33,13 +33,12 @@ export function LicenseDialog({ children, Price, id, title }: LicenseInfoProps) 
   const [progress, setProgress] = useState(0);
   const [isSuccess, setIsSuccess] = useState<boolean | null>(null);
 
-  const NGNtoXOF = (price: string) => Number(price) * 2.5; // Exemple conversion, adapte selon le taux réel
-
+  const NGNtoXOF = (price: string) => Number(price) * 2.5; 
   const handlePay = async (email: string, amount: number, iden: string) => {
     try {
       const res = await axios.post("/api/Paystack/Initialization", {
         email,
-        amount, // en kobo pour NGN
+        amount,
       });
       
       const data = res.data;
@@ -118,7 +117,7 @@ export function LicenseDialog({ children, Price, id, title }: LicenseInfoProps) 
   };
 
   const handleStandardClick = async (id:string) => {
-    const priceXOF = NGNtoXOF(Price[1].price);
+    const priceXOF = parseInt(Price[1].price)*100;
     
     if (priceXOF === 0) {
       await handleDownload(id, "Standard","0",email);
@@ -152,7 +151,7 @@ export function LicenseDialog({ children, Price, id, title }: LicenseInfoProps) 
             <div className="flex flex-col gap-2 p-2 border rounded">
               <div className="flex justify-between items-center">
                 <span>Standard</span>
-                <span>{NGNtoXOF(Price[1].price)} CFA</span>
+                <span>{Price[1].price} CFA</span>
               </div>
               <Input
                 type="email"

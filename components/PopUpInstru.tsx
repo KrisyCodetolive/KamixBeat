@@ -27,7 +27,7 @@ function InstruPopup({ id, open, setOpen }: InstruPopupProps) {
   useEffect(() => {
     async function fetchInstruments() {
       try {
-        const res = await api.get(`/api/Instrumentals/${id}`);
+        const res = await api.get(`/api/Instrumentals/instrumental?params=${id}`);
         console.log(res.data);
         setInstru(res.data);
       } catch (error) {
@@ -75,7 +75,7 @@ function InstruPopup({ id, open, setOpen }: InstruPopupProps) {
                     ? "GRATUIT"
                     : instru.Audio[1].price + " CFA"}
                 </p>
-                <p>{instru.Audio[2].price} CFA</p>
+             
               </div>
             </div>
           </>
