@@ -48,12 +48,12 @@ export async function POST(req: NextRequest) {
     const bpm = formData.get("bpm") as string;
     const gamme = formData.get("gamme") as string;
     const cover = formData.get("cover") as File | null;
-    const full = formData.get("full") as File | null;
+    const preview = formData.get("preview") as File | null;
     const priceString = formData.get("prices") as string;
     const price: string[] = JSON.parse(priceString);
 
     // Validation
-    const Files: File[] = [cover, full].filter(Boolean) as File[];
+    const Files: File[] = [cover, preview].filter(Boolean) as File[];
     if (!title || !bpm || !gamme || price.length === 0 || Files.length === 0) {
       return NextResponse.json(
         { error: "Données manquantes" },

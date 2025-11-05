@@ -62,7 +62,7 @@ function SendInstru({ children , setLoader }: MyBtnProps) {
       formData.append("gamme", scale);
       formData.append("cover", cover!);
       formData.append("preview", audios[0]);
-      formData.append("full", audios[1]);
+      //formData.append("full", audios[1]);
       const prices = ["Free", standardPrice];
       formData.append("prices", JSON.stringify(prices));
 
