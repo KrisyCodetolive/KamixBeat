@@ -98,19 +98,21 @@ export async function GET(
 
 //DELETE a instrumental
 export async function DELETE(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  req: NextRequest
 ) {
-  const { id } = await params;
-  const instrumentalId = parseInt(id);
+const { searchParams } = new URL(req.url);
+  const Id = parseFloat(searchParams.get("params")!);
 
-  if (isNaN(instrumentalId)) {
-    return NextResponse.json({ error: "ID invalide" }, { status: 400 });
+  if (isNaN(Id)) {
+    return NextResponse.json(
+      { error: "ID invalide" },
+      { status: 400, headers }
+    );
   }
 
   // 1. Vérifier existence en BD
   const instrumental = await prisma.instrumental.findUnique({
-    where: { instruId: instrumentalId },
+    where: { instruId: Id },
     select: { cover: true },
   });
 
@@ -123,7 +125,7 @@ export async function DELETE(
 
   // 2. Récupérer les fichiers audio associés
   const audioFiles = await prisma.audioFile.findMany({
-    where: { instrumentalId },
+    where: { instrumentalId: Id },
     select: { path: true },
   });
 
@@ -152,7 +154,7 @@ let Pathfiles: string[] = [];
 
   // 5. Supprimer les entrées en BD (cascade audioFiles si non configuré)
   try {
-    await prisma.instrumental.delete({ where: { instruId: instrumentalId } });
+    await prisma.instrumental.delete({ where: { instruId: Id } });
   } catch (err: any) {
     console.error("Erreur suppression BD:", err.message);
     return NextResponse.json(
