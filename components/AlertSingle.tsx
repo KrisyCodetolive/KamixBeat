@@ -27,7 +27,7 @@ function AlertSingle({id , title , Open , setLoader , Close}:MyBtnProps) {
       setLoader(true)
       try{
 
-        const res = await Axios.delete(`api/Instrumentals/${id}`);
+        const res = await Axios.delete(`/api/Instrumentals/instrumental?params=${id}`);
         console.log('reponse:', res.data);
         window.location.reload()
         toast.success("Instrument a été supprimé avec succès !");
