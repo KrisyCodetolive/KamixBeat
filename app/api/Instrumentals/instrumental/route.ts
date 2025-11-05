@@ -27,7 +27,8 @@ export async function GET(
   req: NextRequest
 ) {
   const { searchParams } = new URL(req.url);
-  const Id = parseFloat(searchParams.get("params")!);
+  const Id = parseInt(searchParams.get("params")!);
+  console.log(Id)
 
   if (isNaN(Id)) {
     return NextResponse.json(
