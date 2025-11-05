@@ -46,8 +46,7 @@ function SendInstru({ children , setLoader }: MyBtnProps) {
       !scale ||
       !cover ||
       audios.length === 0 ||
-      !standardPrice ||
-      !premiumPrice
+      !standardPrice 
     ) {
       toast.error(
         "Veuillez remplir tous les champs et ajouter les fichiers nécessaires."

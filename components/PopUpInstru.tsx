@@ -71,9 +71,9 @@ function InstruPopup({ id, open, setOpen }: InstruPopupProps) {
 
               <div className="flex justify-center items-center gap-2">
                 <p>
-                  {instru.Audio[1].price == "0"
+                  {instru.Audio[0].price == "0"
                     ? "GRATUIT"
-                    : instru.Audio[1].price + " CFA"}
+                    : instru.Audio[0].price + " CFA"}
                 </p>
              
               </div>

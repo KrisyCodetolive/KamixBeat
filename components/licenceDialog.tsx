@@ -145,7 +145,7 @@ export function LicenseDialog({ children, Price, id, title }: LicenseInfoProps) 
           </DialogHeader>
 
           <div className="space-y-4">
-            {Price[1].price === "0" ? null : (
+            {Price[0].price === "0" ? null : (
               <div className="flex justify-between items-center p-2 border rounded">
                 <span>Free</span>
                 <span>0 CFA</span>
@@ -155,7 +155,7 @@ export function LicenseDialog({ children, Price, id, title }: LicenseInfoProps) 
             <div className="flex flex-col gap-2 p-2 border rounded">
               <div className="flex justify-between items-center">
                 <span>Standard</span>
-                <span>{Price[1].price} CFA</span>
+                <span>{Price[0].price} CFA</span>
               </div>
               <Input
                 type="email"
@@ -172,7 +172,7 @@ export function LicenseDialog({ children, Price, id, title }: LicenseInfoProps) 
           </div>
 
           <DialogFooter className="flex justify-between">
-            {Price[1].price === "0" ? null : (
+            {Price[0].price === "0" ? null : (
               <Button variant="outline" onClick={() => handleDownload(id, "Free", "0")}>
                 Free
               </Button>

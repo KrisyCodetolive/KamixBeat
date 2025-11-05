@@ -107,7 +107,7 @@ export async function POST(req: NextRequest) {
         path: supabase.storage
           .from("instrumentals")
           .getPublicUrl(`${instruFolder}/${file.name}`).data.publicUrl,
-        price: countId === 0 ? "0" : price[countId - 1],
+        price: countId === 0 ? "0" : price[countId],
       });
       countId++;
     }
