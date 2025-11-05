@@ -10,12 +10,12 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "Content-Type, Authorization",
 };
 
-// ✅ Réponse CORS pour les preflight requests
+//  Réponse CORS pour les preflight requests
 export async function OPTIONS() {
   return NextResponse.json({}, { status: 200, headers: corsHeaders });
 }
 
-// ⚙️ Supabase client (clé service role)
+//  Supabase client (clé service role)
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -23,7 +23,7 @@ const supabase = createClient(
 
 type FileType = "mp3" | "zip" | "png" | "jpg";
 
-// ✅ GET — Récupération des instrumentaux
+// GET — Récupération des instrumentaux
 export async function GET() {
   try {
     const instrus = await prisma.instrumental.findMany({
@@ -40,7 +40,7 @@ export async function GET() {
   }
 }
 
-// ✅ POST — Ajout d’un instrumental
+//  POST — Ajout d’un instrumental
 export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
@@ -48,13 +48,12 @@ export async function POST(req: NextRequest) {
     const bpm = formData.get("bpm") as string;
     const gamme = formData.get("gamme") as string;
     const cover = formData.get("cover") as File | null;
-    const preview = formData.get("preview") as File | null;
     const full = formData.get("full") as File | null;
     const priceString = formData.get("prices") as string;
     const price: string[] = JSON.parse(priceString);
 
     // Validation
-    const Files: File[] = [cover, preview, full].filter(Boolean) as File[];
+    const Files: File[] = [cover, full].filter(Boolean) as File[];
     if (!title || !bpm || !gamme || price.length === 0 || Files.length === 0) {
       return NextResponse.json(
         { error: "Données manquantes" },
@@ -175,7 +174,7 @@ export async function POST(req: NextRequest) {
   }
 }
 
-// ✅ DELETE — Suppression de tous les instrumentaux
+//DELETE — Suppression de tous les instrumentaux
 export async function DELETE() {
   const FileToDelete: string[] = [];
 
