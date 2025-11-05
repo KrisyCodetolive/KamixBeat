@@ -59,7 +59,7 @@ export default function InstrumentalInterface({
           alt="COVER"
           className="w-full h-64 object-cover rounded-lg shadow"
         />
-        <div className="absolute bottom-5 left-[50%] translate-x-[-50%]"> <MusicPlayer src={instru.SignedUrl[2]}/>
+        <div className="absolute bottom-5 left-[50%] translate-x-[-50%]"> <MusicPlayer src={instru.SignedUrl[1]}/>
         </div>
       </div>
 
