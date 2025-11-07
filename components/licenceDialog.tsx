@@ -2,7 +2,7 @@
 
 import { SetStateAction, useState } from "react";
 import { Input } from "@/components/ui/input"; 
-import { Button } from "@/components/ui/button";// adapte Input si tu as un autre composant
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -23,7 +23,7 @@ interface LicenseInfoProps {
   title:string; 
   Price: {
     path: string;
-    price: string; // en NGN ou en la devise d'origine
+    price: string; 
   }[];
 }
 
@@ -121,9 +121,10 @@ export function LicenseDialog({ children, Price, id, title }: LicenseInfoProps) 
   };
 
   const handleStandardClick = async (id:string) => {
-    const priceXOF = NGNtoXOF(Price[1].price);
+    const priceXOF = NGNtoXOF(Price[0].price);
     
     if (priceXOF === 0) {
+      console.log(id)
       await handleDownload(id, "Standard","0",email);
     } else {
       // Demander l'email si non rempli
