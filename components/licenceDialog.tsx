@@ -83,7 +83,6 @@ export function LicenseDialog({ children, Price, id, title }: LicenseInfoProps) 
       setIsDownloading(true);
       setProgress(0);
       setIsSuccess(null);
-      console.log("id:",idenn)
       const response = await axios.post("/api/Paystack/verify", {
         params: idenn,
         reference: ref,

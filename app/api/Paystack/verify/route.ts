@@ -23,7 +23,6 @@ export async function POST(req: Request) {
   try {
     const { params, reference, type, email } = await req.json();
     if (!params) {
-      console.log("Paramètre 'params' manquant")
       return NextResponse.json(
         { error: "Paramètre 'params' manquant" },
         { status: 400, headers }
@@ -72,11 +71,18 @@ export async function POST(req: Request) {
         Audio.map((a) => createSignedUrl(a.path))
       );
 
-      const selectedUrl = type === "Free" ? signedUrls[0] : signedUrls[1] ?? null;
+      let selectedUrl
+      if(signedUrls.length == 1){
+        selectedUrl = signedUrls[0]
+      }else{
+        selectedUrl = type === "Free" ? signedUrls[0] : signedUrls[1] ?? null;
+      }
+
 
       if (!selectedUrl) {
+        console.log("Aucun lien valide trouvé pour ce type")
         return NextResponse.json(
-          { error: "Aucun lien valide trouvé pour ce type" },
+          { mess: "Aucun lien valide trouvé pour ce type" },
           { status: 400, headers }
         );
       }
